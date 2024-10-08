@@ -1,0 +1,19 @@
+# input file for MD-TAT
+
+dumpfile lj-natom4000-nframe100-dt0.002.dump
+nframe 1000
+natom 4000
+dt 0.002
+
+irdf 0
+rcut 0.0
+
+imsd 1
+isisf 0
+vecq 0.5
+
+test_arg 42
+
+nfreq 1
+nevery 1
+nrepeat 50
