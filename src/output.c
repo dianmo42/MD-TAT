@@ -39,8 +39,8 @@ void PrintSISF()
     for (int t = 0; t < nrepeat; ++t)
     {
         sisf[t] /= nref;
-        ngp[t] /= nref;
-        ngp[t] -= sisf[t] * sisf[t];
+        xhi4[t] /= nref;
+        xhi4[t] -= sisf[t] * sisf[t];
 
         fprintf(fp, "%.3f  %-10.6g  %-10.6g\n", t_corr[t] * dt, sisf[t], xhi4[t]);
     }
