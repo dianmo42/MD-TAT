@@ -1,47 +1,50 @@
 #include "mdtat.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+void PrintMSD();
 
-int nref;
+void PrintSISF();
 
-void OutputMSD()
+void Output()
 {
-    FILE *fp = fopen("msd.dat", "w");
+    if (imsd)
+        PrintMSD();
+    if (isisf)
+        PrintSISF();
 
-    fprintf(fp, "#    t    MSD    NGP\n");
+    return;
+}
+
+void PrintMSD()
+{
+    FILE *fp = fopen(fn_msd, "w");
+    
+    fprintf(fp, "#  t    MSD    NGP\n");
     for (int t = 0; t < nrepeat; ++t)
     {
         msd[t] /= nref;
         ngp[t] /= nref;
-        fprintf(fp, "%lf  %lf  %lf\n", (t + 1) * nevery * dt, msd[t], ngp[t]);
+
+        fprintf(fp, "%.3f  %-10.6g  %-10.6g\n", t_corr[t] * dt, msd[t], ngp[t]);
     }
     fclose(fp);
 
     return;
 }
 
-void OutputSISF()
+void PrintSISF()
 {
-    FILE *fp = fopen("sisf.dat", "w");
-
-    fprintf(fp, "#    t    SISF    Xhi4");
+    FILE *fp = fopen(fn_sisf, "w");
+    
+    fprintf(fp, "#  t    SISF    Xhi4\n");
     for (int t = 0; t < nrepeat; ++t)
     {
         sisf[t] /= nref;
-        xhi4[t] /= nref;
-        xhi4[t] -= sisf[t];
-        fprintf(fp, "%lf  %lf  %lf\n", (t + 1) * nevery * dt, sisf[t], xhi4[t]);
+        ngp[t] /= nref;
+        ngp[t] -= sisf[t] * sisf[t];
+
+        fprintf(fp, "%.3f  %-10.6g  %-10.6g\n", t_corr[t] * dt, sisf[t], xhi4[t]);
     }
     fclose(fp);
-
-    return;
-}
-
-void Output()
-{
-    OutputMSD();
-    OutputSISF();
 
     return;
 }

@@ -1,114 +1,132 @@
 #include "mdtat.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+char *Field[] = {"id", "type", "mass", 
+                 "xs", "ys", "zs", 
+                 "xu", "yu", "zu", 
+                 "vx", "vy", "vz", 
+                 "fx", "fy", "fz"};
 
-enum {ID, TYPE, MASS, XS, YS, ZS, XU, YU, ZU, VX, VY, VZ, FX, FY, FZ};
-char *Field[] = {"id", "type", "mass", "xs", "ys", "zs", "xu", "yu", "zu", "vx", "vy", "vz", "fx", "fy", "fz"};
-int field[64] = {0};
-int nline, nfield;
+int nfield, nline, ntype = sizeof(Field) / sizeof(char *);
 
+void ReadHeader(FILE *fp);
+
+void ReadAtoms(FILE *fp, int mode);
+
+void ReadDump(FILE *fp, int mode)
+{    
+    ReadHeader(fp);
+    ReadAtoms(fp, mode);
+    
+    return;
+}
+
+// header information in dumpfile
 void ReadHeader(FILE *fp)
 {
-    int timestep;
-    int nline;
-    double lo_tmp, hi_tmp;
     char *buff, *token;
-    buff = (char *)malloc(1024 * sizeof(char));
+    buff = (char *)malloc(Maxlength * sizeof(char));    
+    token = (char *)malloc(Maxlength * sizeof(char));    
 
-    fgets(buff, 1024, fp);
-    fgets(buff, 1024, fp);
-    timestep = atoi(buff);
+    int timestep = 0;
+    real lo_tmp, hi_tmp;
     
-    // natom in input file must be greater than or equal to 'NUMBER OF ATOMS' in dumpfile
-    fgets(buff, 1024, fp);
-    fgets(buff, 1024, fp);
-    nline = atoi(buff);
-    if (nline > natom)
-        ErrorExit("Invalid parameter: natom\n");
+    fgets(buff, Maxlength, fp);
+    if (feof(fp))
+        ErrorExit("Error: End of dumpfile\n");
 
-    // get box information
-    fgets(buff, 1024, fp);
-    fscanf(fp, "%lf %lf\n", &lo_tmp, &hi_tmp);
+    fgets(buff, Maxlength, fp);
+    timestep = atoi(buff);
+
+    fgets(buff, Maxlength, fp);
+    fgets(buff, Maxlength, fp);
+    nline = atoi(buff);
+
+    // box information
+    fgets(buff, Maxlength, fp);
+    fgets(buff, Maxlength, fp);
+    lo_tmp = atof(strtok(buff, " \t\n"));
+    hi_tmp = atof(strtok(NULL, " \t\n"));
     box.x = hi_tmp - lo_tmp;
     box_re.x = 1. / box.x;
-    fscanf(fp, "%lf %lf\n", &lo_tmp, &hi_tmp);
+    
+    fgets(buff, Maxlength, fp);
+    lo_tmp = atof(strtok(buff, " \t\n"));
+    hi_tmp = atof(strtok(NULL, " \t\n"));
     box.y = hi_tmp - lo_tmp;
     box_re.y = 1. / box.y;
-    fscanf(fp, "%lf %lf\n", &lo_tmp, &hi_tmp);
+
+    fgets(buff, Maxlength, fp);
+    lo_tmp = atof(strtok(buff, " \t\n"));
+    hi_tmp = atof(strtok(NULL, " \t\n"));
     box.z = hi_tmp - lo_tmp;
     box_re.z = 1. / box.z;
 
-    // check fields in dumpfile
-    fgets(buff, 1024, fp);
-    for (int i = 0; i < 3; ++i)
-        token = __strtok_r(buff, " \t", &buff);
+    // loop all fields in dumpfile
+    // field type is saved in fieldtype[], set fieldtype = -1 if not specified
+    fgets(buff, Maxlength, fp);
+    token = strtok(buff, " \t\n");
+    token = strtok(NULL, " \t\n");
+    token = strtok(NULL, " \t\n");
     int j = 0;
     while (token != NULL)
     {
-        for (int i = ID; i < FZ; ++i)
+        for (int i = 0; i < ntype; ++i)
         {
             if (strcmp(token, Field[i]) == 0)
             {
-                field[j] = i;
+                fieldtype[j] = i;
                 break;
             }
-            field[j] = -1;
+            fieldtype[j] = -1;
         }
+
+        token = strtok(NULL, " \t\n");
         ++j;
-        token = __strtok_r(buff, " \t\n", &buff);
     }
     nfield = j;
 
-    if (field[0] != 0)
+    if (fieldtype[0] != 0)
         ErrorExit("Error: The first field must be ID\n");
-    
-    return;
+
+    return;    
 }
 
-void ReadAtom(FILE *fp)
+// read current frame
+// skip all lines if the frame won't be used in further calculation
+void ReadAtoms(FILE *fp, int mode)
 {
-    int id;
     char *buff, *token;
-    buff = (char *)malloc(1024 * sizeof(char));
+    buff = (char *)malloc(Maxlength * sizeof(char));    
+    token = (char *)malloc(Maxlength * sizeof(char));    
+    
+    int id = 0;
 
     for (int line = 0; line < nline; ++line)
     {
-        fgets(buff, 1024, fp);
-        for (int i = 0; i < nfield; ++i)
+        fgets(buff, Maxlength, fp);
+        if (mode == 0)
+            continue;
+
+        id = atoi(strtok(buff, " \t")) - 1;
+        for (int i = 1; i < nfield; ++i)
         {
-            token = __strtok_r(buff, " \t\n", &buff);
-            
-            if (field[i] == 0) id = atoi(token) - 1;
-            else if (field[i] == 1) atom_cur[id].type = atoi(token);
-            else if (field[i] == 2) atom_cur[id].mass = atof(token);
-            else if (field[i] == 3) atom_cur[id].r.x = atof(token);
-            else if (field[i] == 4) atom_cur[id].r.y = atof(token);
-            else if (field[i] == 5) atom_cur[id].r.z = atof(token);
-            else if (field[i] == 6) atom_cur[id].r.x = atof(token) * box_re.x;
-            else if (field[i] == 7) atom_cur[id].r.y = atof(token) * box_re.y;
-            else if (field[i] == 8) atom_cur[id].r.z = atof(token) * box_re.z;
-            else if (field[i] == 9) atom_cur[id].v.x = atof(token);
-            else if (field[i] == 10) atom_cur[id].v.y = atof(token);
-            else if (field[i] == 11) atom_cur[id].v.z = atof(token);
-            else if (field[i] == 12) atom_cur[id].f.x = atof(token);
-            else if (field[i] == 13) atom_cur[id].f.y = atof(token);
-            else if (field[i] == 14) atom_cur[id].f.z = atof(token);
-            else continue;
+            token = strtok(NULL, " \t");
+            if (fieldtype[i] == 1) atom_cur[id].type = atoi(token);
+            else if (fieldtype[i] == 2) atom_cur[id].mass = atof(token);
+            else if (fieldtype[i] == 3) atom_cur[id].r.x = atof(token);
+            else if (fieldtype[i] == 4) atom_cur[id].r.y = atof(token);
+            else if (fieldtype[i] == 5) atom_cur[id].r.z = atof(token);
+            else if (fieldtype[i] == 6) atom_cur[id].r.x = atof(token) * box_re.x;      // scale the coordinates
+            else if (fieldtype[i] == 7) atom_cur[id].r.y = atof(token) * box_re.y;
+            else if (fieldtype[i] == 8) atom_cur[id].r.z = atof(token) * box_re.z;
+            else if (fieldtype[i] == 9) atom_cur[id].v.x = atof(token);
+            else if (fieldtype[i] == 10) atom_cur[id].v.y = atof(token);
+            else if (fieldtype[i] == 11) atom_cur[id].v.z = atof(token);
+            else if (fieldtype[i] == 12) atom_cur[id].f.x = atof(token);
+            else if (fieldtype[i] == 13) atom_cur[id].f.y = atof(token);
+            else if (fieldtype[i] == 14) atom_cur[id].f.z = atof(token);
         }
     }
 
-    return;
-}
-
-void ReadDump(FILE *fp, int frame)
-{
-    ReadHeader(fp);
-    ReadAtom(fp);
-
-    if (frame % nfreq == 0)
-        memcpy(atom_ref[frame / nfreq], atom_cur, natom * sizeof(Atom));
-    
     return;
 }

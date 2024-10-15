@@ -1,64 +1,61 @@
-#ifndef _MDTAT_H
-#define _MDTAT_H
+#ifndef MDTAT_H
+#define MDTAT_H
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#define real    double
-#define DIMENSION   3
+#define real float
+#define DIMENSION 3
+#define Maxlength 1024
 
 // struct
-typedef struct Vector
+typedef struct VECTOR
 {
     real x;
     real y;
     real z;
-} Vec;
+} Vector;
 
-typedef struct AtomInfo
+typedef struct ATOM
 {
     int id;
     int type;
     real mass;
-    Vec r;
-    Vec v;
-    Vec f;
+    Vector r;
+    Vector v;
+    Vector f;
 } Atom;
 
 // variable
 extern char *fn_dump;
-extern int nframe;
 extern int natom;
+extern int nframe;
 extern real dt;
 
-extern int irdf;
-extern real rcut;
+extern int nfreq, nevery, nrepeat, nref;
+extern int *t_corr;
+extern Atom **atom_ref, *atom_cur;
+extern Vector box, box_re;
+extern int *fieldtype;
+
 extern int imsd;
 extern int isisf;
 extern real vecq;
 
-extern int nfreq, nevery, nrepeat, nref;
-extern Atom **atom_ref, *atom_cur;
-extern Vec box, box_re;
-
 extern real *msd, *ngp;
 extern real *sisf, *xhi4;
 
+extern char *fn_msd;
+extern char *fn_sisf;
+
 // function
 void ReadInput(int argc, char **argv);
-void AllocMem();
-void ReadDump(FILE *fp, int frame);
+void Initial();
+void ErrorExit(char *ErrMsg);
+int CheckFrame(int frame);
+void ReadDump(FILE *fp, int mode);
 void Compute(int frame);
-void ErrorExit(char *str);
 void Output();
-
-
-// macro
-#define ALLOC_MEM(var, num, type)                       \
-            var = (type *)malloc((num) * sizeof(type))
-#define ALLOC_MEM2(var, num1, num2, type)               \
-            ALLOC_MEM(var, num1, type *);               \
-            ALLOC_MEM(var[0], (num1) * (num2), type);   \
-            for (int i = 1; i < num1; ++i)              \
-                var[i] = var[i - 1] + num2
 
 #endif

@@ -1,19 +1,17 @@
 #include "mdtat.h"
 
-#include <stdio.h>
-
 int main(int argc, char **argv)
 {
     ReadInput(argc, argv);
-    AllocMem();
-    
-    FILE *fp_dump = fopen(fn_dump, "r");
-    if (fp_dump == NULL)
-        ErrorExit("Error opening dumpfile\n");
-    
+    Initial();
+
+    FILE *fp = fopen(fn_dump, "r");
+    if (fp == NULL)
+        ErrorExit("Error: Can not open dumpfile\n");
+
     for (int i = 0; i < nframe; ++i)
     {
-        ReadDump(fp_dump, i);
+        ReadDump(fp, CheckFrame(i));
         Compute(i);
     }
 

@@ -2,36 +2,57 @@
 
 #include <omp.h>
 #include <math.h>
-#include <stdlib.h>
-#include <string.h>
 
-Vec *dr;
+void Compute_dr(Vector *dr, Atom *atom1, Atom *atom2);
 
-void UpdateDr(int t0, int t)
+void ComputeMSD(Vector *dr, int t);
+
+void ComputeSISF(Vector *dr, int t);
+
+void Compute(int frame)
 {
-    ALLOC_MEM(dr, natom, Vec);
-    Vec dr_tmp;
+    int iref = frame / nfreq;
+    Vector *dr;
+    dr = (Vector *)malloc(natom * sizeof(Vector));
 
-    #pragma omp parallel for firstprivate(t0, box)
+    if ((frame % nfreq == 0) && (iref < nref))
+    {
+        memcpy(atom_ref[iref], atom_cur, natom * sizeof(Atom));
+    }
+
+    for (iref = 0; iref < nref; ++iref)
+    {
+        for (int i = 0; i < nrepeat; ++i)
+        {
+            if (frame == iref * nfreq + t_corr[i])
+            {
+                fprintf(stdout, "\t\tiref: %d, t = %d\n", iref, i);
+                Compute_dr(dr, atom_ref[iref], atom_cur);
+                ComputeMSD(dr, i);
+                ComputeSISF(dr, i);
+            }
+        }
+    }
+    fprintf(stdout, "%f %f %f\n", atom_ref[0][3].r.x, atom_ref[0][3].r.y, atom_ref[0][3].r.z);
+
+    return;
+}
+
+void Compute_dr(Vector *dr, Atom *atom1, Atom *atom2)
+{
     for (int i = 0; i < natom; ++i)
     {
-        dr[i].x = atom_cur[i].r.x - atom_ref[t0][i].r.x;
-        dr[i].y = atom_cur[i].r.y - atom_ref[t0][i].r.y;
-        dr[i].z = atom_cur[i].r.z - atom_ref[t0][i].r.z;
+        dr[i].x = atom1[i].r.x - atom2[i].r.x;
+        dr[i].y = atom1[i].r.y - atom2[i].r.y;
+        dr[i].z = atom1[i].r.z - atom2[i].r.z;
 
         // periodic boundary condition
-        if (dr[i].x > 0.5)
-            --dr[i].x;
-        else if (dr[i].x < -0.5)
-            ++dr[i].x;
-        if (dr[i].y > 0.5)
-            --dr[i].y;
-        else if (dr[i].y < -0.5)
-            ++dr[i].y;
-        if (dr[i].z > 0.5)
-            --dr[i].z;
-        else if (dr[i].z < -0.5)
-            ++dr[i].z;
+        if (dr[i].x > 0.5) --dr[i].x;
+        else if (dr[i].x < -0.5) ++dr[i].x;
+        if (dr[i].y > 0.5) --dr[i].y;
+        else if (dr[i].y < -0.5) ++dr[i].y;
+        if (dr[i].z > 0.5) --dr[i].z;
+        else if (dr[i].z < -0.5) ++dr[i].z;
 
         dr[i].x *= box.x;
         dr[i].y *= box.y;
@@ -41,16 +62,16 @@ void UpdateDr(int t0, int t)
     return;
 }
 
-void ComputeMSD(int t)
+void ComputeMSD(Vector *dr, int t)
 {
     if (imsd == 0)
         return;
-    
+
     real dr2_tmp = 0;
     real msd_tmp = 0;
     real ngp_tmp = 0;
-    
-    #pragma omp parallel for reduction(+ : msd_tmp, ngp_tmp)
+
+    // #pragma omp parallel for private(dr2_tmp) reduction(+ : msd_tmp, ngp_tmp)
     for (int i = 0; i < natom; ++i)
     {
         dr2_tmp = dr[i].x * dr[i].x + dr[i].y * dr[i].y + dr[i].z * dr[i].z;
@@ -66,14 +87,14 @@ void ComputeMSD(int t)
     return;
 }
 
-void ComputeSISF(int t)
+void ComputeSISF(Vector *dr, int t)
 {
     if (isisf == 0)
         return;
-    
+
     real sisf_tmp = 0;
 
-    #pragma omp parallel for reduction(+: sisf_tmp)
+#pragma omp parallel for reduction(+ : sisf_tmp)
     for (int i = 0; i < natom; ++i)
     {
         sisf_tmp += cos((dr[i].x + dr[i].y + dr[i].z) * vecq);
@@ -82,27 +103,6 @@ void ComputeSISF(int t)
     sisf_tmp /= natom;
     sisf[t] += sisf_tmp;
     xhi4[t] += sisf_tmp * sisf_tmp;
-
-    return;
-}
-
-void Compute(int frame)
-{
-    if (frame == 0)
-        return;
-
-    int nref = frame / nfreq;
-    for (int t0 = 0; t0 < nref; ++t0)
-    {
-        for (int t = 0; t < nrepeat; ++t)
-        {
-            if (frame != t0 + t * nevery)
-                continue;
-            UpdateDr(t0, t);
-            ComputeMSD(t);
-            ComputeSISF(t);
-        }
-    }
 
     return;
 }
