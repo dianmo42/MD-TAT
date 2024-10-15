@@ -9,7 +9,7 @@ int main(int argc, char **argv)
     if (fp == NULL)
         ErrorExit("Error: Can not open dumpfile\n");
 
-    for (int i = 0; i < nframe; ++i)
+    for (int i = 0; i < nframe + 1; ++i)
     {
         ReadDump(fp, CheckFrame(i));
         Compute(i);
