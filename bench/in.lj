@@ -18,6 +18,7 @@ create_atoms    1 box
 mass            1 1.0
 
 velocity        all create 1.44 87287 loop geom
+write_data      data.LJ nocoeff
 
 pair_style      lj/cut 2.5
 pair_coeff      1 1 1.0 1.0 2.5
@@ -26,6 +27,6 @@ neighbor        0.3 bin
 neigh_modify    delay 0 every 20 check no
 
 fix             1 all nve
-dump            1 all custom 1 LJ-natom4000-nframe10000-dt0.005.dump id xs ys zs
+dump            1 all custom 10 LJ-natom4000-nframe1000-dt0.05.dump id xs ys zs
 dump_modify     1 pbc yes sort id
 run             10000
