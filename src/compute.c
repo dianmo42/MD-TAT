@@ -26,14 +26,12 @@ void Compute(int frame)
         {
             if (frame == iref * nfreq + t_corr[i])
             {
-                fprintf(stdout, "\t\tiref: %d, t = %d\n", iref, i);
                 Compute_dr(dr, atom_ref[iref], atom_cur);
                 ComputeMSD(dr, i);
                 ComputeSISF(dr, i);
             }
         }
     }
-    fprintf(stdout, "%f %f %f\n", atom_ref[0][3].r.x, atom_ref[0][3].r.y, atom_ref[0][3].r.z);
 
     return;
 }
