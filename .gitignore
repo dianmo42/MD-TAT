@@ -52,5 +52,7 @@ Mkfile.old
 dkms.conf
 
 # LAMMPS output files
+*.dump
 dump.*
 log.*
+*.log
