@@ -1,11 +1,11 @@
 # MD-TAT: Molecular Dynamics Trajectory Analyzing Tool
 
 Currently available:
-- Raidial distribution function (RDF)
-- Static structure factor (SSF)
-- Mean-squared displacement (MSD) and its non-Gaussian parameter (NGP)
-- Self-intermediate scattering function (SISF)
-- Four-point dynamic susceptibility
+- Raidial distribution function $g(r)$
+- Static structure factor $S(q)$
+- Mean-squared displacement $\Delta^2(t)$ and its non-Gaussian parameter $\alpha_2(t)$
+- Self-intermediate scattering function $F_s(q,t)$
+- Four-point dynamic susceptibility $\chi_4(t)$
 
 Will be added:
 - Overlap function
