@@ -8,7 +8,7 @@ Currently available:
 - Four-point dynamic susceptibility $\chi_4(t)$
 
 Will be added:
-- Overlap function
+- Overlap function $Q(t)$
 
 ## Build
 Clone the repository to your workspace and build from source code
@@ -19,7 +19,8 @@ Clone the repository to your workspace and build from source code
 ```
 
 ## Run
-Modify the input parameters within the file `TAT.in`, or create your own version, and specify the input file with command
+Run with command
 ```
     ./TAT -in <input_file>
 ```
+ The default input file is `TAT.in` if not specified.
