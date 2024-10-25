@@ -16,12 +16,16 @@ int *fieldtype;
 int imsd;
 int isisf;
 real vecq;
+int ioverlap;
+real a0;
 
 real *msd, *ngp;
 real *sisf, *xhi4;
+real *overlap;
 
 char *fn_msd;
 char *fn_sisf;
+char *fn_overlap;
 
 void Initial()
 {   
@@ -78,6 +82,10 @@ void Initial()
     {
         sisf = (real *)malloc(nrepeat * sizeof(real));
         xhi4 = (real *)malloc(nrepeat * sizeof(real));
+    }
+    if (ioverlap)
+    {
+        overlap = (real *)malloc(nrepeat * sizeof(real));
     }
 
     return;
