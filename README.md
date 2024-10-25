@@ -5,8 +5,8 @@ Currently available:
 - Static structure factor $S(q)$
 - Mean-squared displacement $\Delta^2(t)$ and its non-Gaussian parameter $\alpha_2(t)$
 - Self-intermediate scattering function $F_s(q,t)$
-- Four-point dynamic susceptibility $\chi_4(t)$
 - Overlap function $Q(t)$
+- Four-point dynamic susceptibility $\chi_4(t)$
 
 ## Build
 Clone the repository to your workspace and build from source code
