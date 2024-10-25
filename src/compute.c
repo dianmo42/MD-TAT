@@ -125,6 +125,7 @@ void ComputeOverlap(Vector *dr, int t)
 
     overlap_tmp /= natom;
     overlap[t] += overlap_tmp;
+    xhi4_Q[t] += overlap_tmp * overlap_tmp;
 
     return;
 }

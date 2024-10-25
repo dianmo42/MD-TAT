@@ -42,12 +42,16 @@ extern int *fieldtype;
 extern int imsd;
 extern int isisf;
 extern real vecq;
+extern int ioverlap;
+extern real a0;
 
 extern real *msd, *ngp;
 extern real *sisf, *xhi4;
+extern real *overlap, *xhi4_Q;
 
 extern char *fn_msd;
 extern char *fn_sisf;
+extern char *fn_overlap;
 
 // function
 void ReadInput(int argc, char **argv);

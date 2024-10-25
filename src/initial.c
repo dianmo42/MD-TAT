@@ -21,7 +21,7 @@ real a0;
 
 real *msd, *ngp;
 real *sisf, *xhi4;
-real *overlap;
+real *overlap, *xhi4_Q;
 
 char *fn_msd;
 char *fn_sisf;
@@ -86,6 +86,7 @@ void Initial()
     if (ioverlap)
     {
         overlap = (real *)malloc(nrepeat * sizeof(real));
+        xhi4_Q = (real *)malloc(nrepeat * sizeof(real));
     }
 
     return;

@@ -10,6 +10,8 @@ void Output()
         PrintMSD();
     if (isisf)
         PrintSISF();
+    if (ioverlap)
+        PrintOverlap();
 
     return;
 }
@@ -43,6 +45,22 @@ void PrintSISF()
         xhi4[t] -= sisf[t] * sisf[t];
 
         fprintf(fp, "%.3f  %-10.6g  %-10.6g\n", t_corr[t] * dt, sisf[t], xhi4[t]);
+    }
+    fclose(fp);
+
+    return;
+}
+
+void PrintOverlap()
+{
+    FILE *fp = fopen(fn_overlap, "w");
+
+    fprintf(fp, "#  t    Overlap\n");
+    for (int t = 0; t < nrepeat; ++t)
+    {
+        overlap[t] /= nref;
+
+        fprintf(fp, "%.3f  %-10.6g  %-10.6g\n", t_corr[t] * dt, overlap[t], xhi4_Q[t]);
     }
     fclose(fp);
 

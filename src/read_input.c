@@ -74,7 +74,7 @@ void ReadLine(char *str)
     {
         ioverlap = atoi(strtok(NULL, " \t\n"));
         a0 = atof(strtok(NULL, " \t\n"));
-        a0 = a0 * a0;
+        a0 *= a0;
         strcpy(fn_overlap, strtok(NULL, " \t\n"));
     }
     else fprintf(stderr, "\nWarning: Invalid parameter '%s'\n", token);
