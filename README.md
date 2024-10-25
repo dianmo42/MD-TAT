@@ -6,8 +6,6 @@ Currently available:
 - Mean-squared displacement $\Delta^2(t)$ and its non-Gaussian parameter $\alpha_2(t)$
 - Self-intermediate scattering function $F_s(q,t)$
 - Four-point dynamic susceptibility $\chi_4(t)$
-
-Will be added:
 - Overlap function $Q(t)$
 
 ## Build
