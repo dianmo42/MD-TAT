@@ -4,6 +4,8 @@ void PrintMSD();
 
 void PrintSISF();
 
+void PrintOverlap();
+
 void Output()
 {
     if (imsd)

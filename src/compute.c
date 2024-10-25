@@ -116,7 +116,7 @@ void ComputeOverlap(Vector *dr, int t)
     real overlap_tmp = 0;
     real dr2_tmp = 0;
 
-    #pragma omp parallel for private(dr2_tmp) reduction(+ : sisf_tmp)
+    #pragma omp parallel for private(dr2_tmp) reduction(+ : overlap_tmp)
     for (int i = 0; i < natom; ++i)
     {
         dr2_tmp = dr[i].x * dr[i].x + dr[i].y * dr[i].y + dr[i].z * dr[i].z;
