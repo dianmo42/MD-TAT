@@ -10,7 +10,7 @@ nevery          0
 nrepeat         5000
 
 msd             1 msd.dat
-sisf            0 sisf.dat
-vecq            1.0
+sisf            1 1.0 sisf.dat
+overlap         1 0.3 overlap.dat
 
 # end

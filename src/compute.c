@@ -9,6 +9,8 @@ void ComputeMSD(Vector *dr, int t);
 
 void ComputeSISF(Vector *dr, int t);
 
+void ComputeOverlap(Vector *dr, int t);
+
 void Compute(int frame)
 {
     int iref = frame / nfreq;
@@ -29,6 +31,7 @@ void Compute(int frame)
                 Compute_dr(dr, atom_ref[iref], atom_cur);
                 ComputeMSD(dr, i);
                 ComputeSISF(dr, i);
+                ComputeOverlap(dr, i);
             }
         }
     }
@@ -69,7 +72,7 @@ void ComputeMSD(Vector *dr, int t)
     real msd_tmp = 0;
     real ngp_tmp = 0;
 
-    // #pragma omp parallel for private(dr2_tmp) reduction(+ : msd_tmp, ngp_tmp)
+    #pragma omp parallel for private(dr2_tmp) reduction(+ : msd_tmp, ngp_tmp)
     for (int i = 0; i < natom; ++i)
     {
         dr2_tmp = dr[i].x * dr[i].x + dr[i].y * dr[i].y + dr[i].z * dr[i].z;
@@ -92,7 +95,7 @@ void ComputeSISF(Vector *dr, int t)
 
     real sisf_tmp = 0;
 
-#pragma omp parallel for reduction(+ : sisf_tmp)
+    #pragma omp parallel for reduction(+ : sisf_tmp)
     for (int i = 0; i < natom; ++i)
     {
         sisf_tmp += cos((dr[i].x + dr[i].y + dr[i].z) * vecq);
@@ -101,6 +104,27 @@ void ComputeSISF(Vector *dr, int t)
     sisf_tmp /= natom;
     sisf[t] += sisf_tmp;
     xhi4[t] += sisf_tmp * sisf_tmp;
+
+    return;
+}
+
+void ComputeOverlap(Vector *dr, int t)
+{
+    if (ioverlap == 0)
+        return;
+
+    real overlap_tmp = 0;
+    real dr2_tmp = 0;
+
+    #pragma omp parallel for private(dr2_tmp) reduction(+ : sisf_tmp)
+    for (int i = 0; i < natom; ++i)
+    {
+        dr2_tmp = dr[i].x * dr[i].x + dr[i].y * dr[i].y + dr[i].z * dr[i].z;
+        if (dr2_tmp < a0) overlap_tmp += 1;
+    }
+
+    overlap_tmp /= natom;
+    overlap[t] += overlap_tmp;
 
     return;
 }

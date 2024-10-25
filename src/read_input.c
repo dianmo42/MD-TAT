@@ -51,25 +51,32 @@ void ReadLine(char *str)
 {
     char *token;
 
-    token = __strtok_r(str, " \t\n", &str);
-    if (strcmp(token, "dumpfile") == 0) strcpy(fn_dump, __strtok_r(NULL, " \t\n", &str));
-    else if (strcmp(token, "natom") == 0) natom = atoi(__strtok_r(NULL, " \t\n", &str));
-    else if (strcmp(token, "nframe") == 0) nframe = atoi(__strtok_r(NULL, " \t\n", &str));
-    else if (strcmp(token, "dt") == 0) dt = atof(__strtok_r(NULL, " \t\n", &str));
-    else if (strcmp(token, "nfreq") == 0) nfreq = atoi(__strtok_r(NULL, " \t\n", &str));
-    else if (strcmp(token, "nevery") == 0) nevery = atoi(__strtok_r(NULL, " \t\n", &str));
-    else if (strcmp(token, "nrepeat") == 0) nrepeat = atoi(__strtok_r(NULL, " \t\n", &str));
+    token = strtok(str, " \t\n");
+    if (strcmp(token, "dumpfile") == 0) strcpy(fn_dump, strtok(NULL, " \t\n"));
+    else if (strcmp(token, "natom") == 0) natom = atoi(strtok(NULL, " \t\n"));
+    else if (strcmp(token, "nframe") == 0) nframe = atoi(strtok(NULL, " \t\n"));
+    else if (strcmp(token, "dt") == 0) dt = atof(strtok(NULL, " \t\n"));
+    else if (strcmp(token, "nfreq") == 0) nfreq = atoi(strtok(NULL, " \t\n"));
+    else if (strcmp(token, "nevery") == 0) nevery = atoi(strtok(NULL, " \t\n"));
+    else if (strcmp(token, "nrepeat") == 0) nrepeat = atoi(strtok(NULL, " \t\n"));
     else if (strcmp(token, "msd") == 0) 
     {
-        imsd = atoi(__strtok_r(NULL, " \t\n", &str));
-        strcpy(fn_msd, __strtok_r(NULL, " \t\n", &str));
+        imsd = atoi(strtok(NULL, " \t\n"));
+        strcpy(fn_msd, strtok(NULL, " \t\n"));
     }
     else if (strcmp(token, "sisf") == 0)
     {
-        isisf = atoi(__strtok_r(NULL, " \t\n", &str));
-        strcpy(fn_sisf, __strtok_r(NULL, " \t\n", &str));
+        isisf = atoi(strtok(NULL, " \t\n"));
+        vecq = atof(strtok(NULL, " \t\n")) / sqrt(3.);
+        strcpy(fn_sisf, strtok(NULL, " \t\n"));
     }
-    else if (strcmp(token, "vecq") == 0) vecq = atof(__strtok_r(NULL, " \t\n", &str)) / sqrt(3.);
+    else if (strcmp(token, "overlap") == 0)
+    {
+        ioverlap = atoi(strtok(NULL, " \t\n"));
+        a0 = atof(strtok(NULL, " \t\n"));
+        a0 = a0 * a0;
+        strcpy(fn_overlap, strtok(NULL, " \t\n"));
+    }
     else fprintf(stderr, "\nWarning: Invalid parameter '%s'\n", token);
 
     return;
