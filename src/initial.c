@@ -20,8 +20,8 @@ int ioverlap;
 real a0;
 
 real *msd, *ngp;
-real *sisf, *xhi4;
-real *overlap, *xhi4_Q;
+real *sisf, *chi4;
+real *overlap, *chi4_Q;
 
 char *fn_msd;
 char *fn_sisf;
@@ -81,12 +81,12 @@ void Initial()
     if (isisf)
     {
         sisf = (real *)malloc(nrepeat * sizeof(real));
-        xhi4 = (real *)malloc(nrepeat * sizeof(real));
+        chi4 = (real *)malloc(nrepeat * sizeof(real));
     }
     if (ioverlap)
     {
         overlap = (real *)malloc(nrepeat * sizeof(real));
-        xhi4_Q = (real *)malloc(nrepeat * sizeof(real));
+        chi4_Q = (real *)malloc(nrepeat * sizeof(real));
     }
 
     return;

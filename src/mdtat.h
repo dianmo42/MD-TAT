@@ -46,8 +46,8 @@ extern int ioverlap;
 extern real a0;
 
 extern real *msd, *ngp;
-extern real *sisf, *xhi4;
-extern real *overlap, *xhi4_Q;
+extern real *sisf, *chi4;
+extern real *overlap, *chi4_Q;
 
 extern char *fn_msd;
 extern char *fn_sisf;

@@ -103,7 +103,7 @@ void ComputeSISF(Vector *dr, int t)
 
     sisf_tmp /= natom;
     sisf[t] += sisf_tmp;
-    xhi4[t] += sisf_tmp * sisf_tmp;
+    chi4[t] += sisf_tmp * sisf_tmp;
 
     return;
 }
@@ -125,7 +125,7 @@ void ComputeOverlap(Vector *dr, int t)
 
     overlap_tmp /= natom;
     overlap[t] += overlap_tmp;
-    xhi4_Q[t] += overlap_tmp * overlap_tmp;
+    chi4_Q[t] += overlap_tmp * overlap_tmp;
 
     return;
 }
