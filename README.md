@@ -11,7 +11,7 @@ Currently available:
 ## Build
 Clone the repository to your workspace and build from source code
 ```
-    git clone git@github.com:dianmo42/MD-TAT.git MD-TAT
+    git clone https://github.com/dianmo42/MD-TAT.git MD-TAT
     cd MD-TAT/src
     make
 ```
