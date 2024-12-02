@@ -5,7 +5,7 @@ int main(int argc, char **argv)
     ReadInput(argc, argv);
     Initial();
 
-    FILE *fp = fopen(fn_dump, "r");
+    gzFile fp = gzopen(fn_dump, "r");
     if (fp == NULL)
         ErrorExit("Error: Can not open dumpfile\n");
 

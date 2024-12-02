@@ -8,11 +8,11 @@ char *Field[] = {"id", "type", "mass",
 
 int nfield, nline, ntype = sizeof(Field) / sizeof(char *);
 
-void ReadHeader(FILE *fp);
+void ReadHeader(gzFile fp);
 
-void ReadAtoms(FILE *fp, int mode);
+void ReadAtoms(gzFile fp, int mode);
 
-void ReadDump(FILE *fp, int mode)
+void ReadDump(gzFile fp, int mode)
 {    
     ReadHeader(fp);
     ReadAtoms(fp, mode);
@@ -21,7 +21,7 @@ void ReadDump(FILE *fp, int mode)
 }
 
 // header information in dumpfile
-void ReadHeader(FILE *fp)
+void ReadHeader(gzFile fp)
 {
     char *buff, *token;
     buff = (char *)malloc(Maxlength * sizeof(char));    
@@ -30,32 +30,32 @@ void ReadHeader(FILE *fp)
     int timestep = 0;
     real lo_tmp, hi_tmp;
     
-    fgets(buff, Maxlength, fp);
-    if (feof(fp))
+    gzgets(fp, buff, Maxlength);
+    if (gzeof(fp))
         ErrorExit("Error: End of dumpfile\n");
 
-    fgets(buff, Maxlength, fp);
+    gzgets(fp, buff, Maxlength);
     timestep = atoi(buff);
 
-    fgets(buff, Maxlength, fp);
-    fgets(buff, Maxlength, fp);
+    gzgets(fp, buff, Maxlength);
+    gzgets(fp, buff, Maxlength);
     nline = atoi(buff);
 
     // box information
-    fgets(buff, Maxlength, fp);
-    fgets(buff, Maxlength, fp);
+    gzgets(fp, buff, Maxlength);
+    gzgets(fp, buff, Maxlength);
     lo_tmp = atof(strtok(buff, " \t\n"));
     hi_tmp = atof(strtok(NULL, " \t\n"));
     box.x = hi_tmp - lo_tmp;
     box_re.x = 1. / box.x;
     
-    fgets(buff, Maxlength, fp);
+    gzgets(fp, buff, Maxlength);
     lo_tmp = atof(strtok(buff, " \t\n"));
     hi_tmp = atof(strtok(NULL, " \t\n"));
     box.y = hi_tmp - lo_tmp;
     box_re.y = 1. / box.y;
 
-    fgets(buff, Maxlength, fp);
+    gzgets(fp, buff, Maxlength);
     lo_tmp = atof(strtok(buff, " \t\n"));
     hi_tmp = atof(strtok(NULL, " \t\n"));
     box.z = hi_tmp - lo_tmp;
@@ -63,7 +63,7 @@ void ReadHeader(FILE *fp)
 
     // loop all fields in dumpfile
     // field type is saved in fieldtype[], set fieldtype = -1 if not specified
-    fgets(buff, Maxlength, fp);
+    gzgets(fp, buff, Maxlength);
     token = strtok(buff, " \t\n");
     token = strtok(NULL, " \t\n");
     token = strtok(NULL, " \t\n");
@@ -93,7 +93,7 @@ void ReadHeader(FILE *fp)
 
 // read current frame
 // skip all lines if the frame won't be used in further calculation
-void ReadAtoms(FILE *fp, int mode)
+void ReadAtoms(gzFile fp, int mode)
 {
     char *buff, *token;
     buff = (char *)malloc(Maxlength * sizeof(char));    
@@ -103,7 +103,7 @@ void ReadAtoms(FILE *fp, int mode)
 
     for (int line = 0; line < nline; ++line)
     {
-        fgets(buff, Maxlength, fp);
+        gzgets(fp, buff, Maxlength);
         if (mode == 0)
             continue;
 

@@ -13,6 +13,7 @@ void ReadInput(int argc, char **argv)
     fn_dump = (char *)malloc(256 * sizeof(char));
     fn_msd = (char *)malloc(256 * sizeof(char));
     fn_sisf = (char *)malloc(256 * sizeof(char));
+    fn_overlap = (char *)malloc(256 * sizeof(char));
     buff = (char *)malloc(Maxlength * sizeof(char));
 
     for (int i = 1; i < argc; ++i)
@@ -28,15 +29,10 @@ void ReadInput(int argc, char **argv)
     if (fp == NULL)
         ErrorExit("Error: Can not open input file\n");
 
-    while (1)
+    while (fgets(buff, Maxlength, fp) != NULL)
     {
-        fgets(buff, 1024, fp);
-
-        if (feof(fp))
-            break;
-        if (buff[0] == ' ' || buff[0] == '#' || buff[0] == '\n')
+        if (buff[0] == '#' || buff[0] == '\n')
             continue;
-        
         ReadLine(buff);
     }
 
@@ -48,9 +44,8 @@ void ReadInput(int argc, char **argv)
 }
 
 void ReadLine(char *str)
-{
+{ 
     char *token;
-
     token = strtok(str, " \t\n");
     if (strcmp(token, "dumpfile") == 0) strcpy(fn_dump, strtok(NULL, " \t\n"));
     else if (strcmp(token, "natom") == 0) natom = atoi(strtok(NULL, " \t\n"));
@@ -73,8 +68,7 @@ void ReadLine(char *str)
     else if (strcmp(token, "overlap") == 0)
     {
         ioverlap = atoi(strtok(NULL, " \t\n"));
-        a0 = atof(strtok(NULL, " \t\n"));
-        a0 *= a0;
+        a0 = pow(atof(strtok(NULL, " \t\n")), 2);
         strcpy(fn_overlap, strtok(NULL, " \t\n"));
     }
     else fprintf(stderr, "\nWarning: Invalid parameter '%s'\n", token);
@@ -84,18 +78,21 @@ void ReadLine(char *str)
 
 void PrintPara()
 {
-    fprintf(stdout, "dumpfile   %s\n", fn_dump);
-    fprintf(stdout, "natom      %d\n", natom);
-    fprintf(stdout, "nframe     %d\n", nframe);
-    fprintf(stdout, "dt         %f\n", dt);
-    fprintf(stdout, "nfreq      %d\n", nfreq);
-    fprintf(stdout, "nevery     %d\n", nevery);
-    fprintf(stdout, "nrepeat    %d\n", nrepeat);
-    fprintf(stdout, "imsd       %d\n", imsd);
-    fprintf(stdout, "msd file   %s\n", fn_msd);
-    fprintf(stdout, "isisf      %d\n", isisf);
-    fprintf(stdout, "sisf file  %s\n", fn_sisf);
-    fprintf(stdout, "vecq       %f\n", vecq);
+    fprintf(stdout, "dumpfile       %s\n", fn_dump);
+    fprintf(stdout, "natom          %d\n", natom);
+    fprintf(stdout, "nframe         %d\n", nframe);
+    fprintf(stdout, "dt             %f\n", dt);
+    fprintf(stdout, "nfreq          %d\n", nfreq);
+    fprintf(stdout, "nevery         %d\n", nevery);
+    fprintf(stdout, "nrepeat        %d\n", nrepeat);
+    fprintf(stdout, "imsd           %d\n", imsd);
+    fprintf(stdout, "msd file       %s\n", fn_msd);
+    fprintf(stdout, "isisf          %d\n", isisf);
+    fprintf(stdout, "sisf file      %s\n", fn_sisf);
+    fprintf(stdout, "vecq           %f\n", vecq);
+    fprintf(stdout, "ioverlap       %d\n", ioverlap);
+    fprintf(stdout, "overlap file   %s\n", fn_overlap);
+    fprintf(stdout, "a0             %f\n", a0);
     fprintf(stdout, "\n");
 
     return;

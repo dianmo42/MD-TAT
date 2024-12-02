@@ -1,16 +1,14 @@
 # input for MD-TAT
 
-dumpfile        ../bench/LJ-natom4000-nframe1000-dt0.005.dump
-natom           4000
-nframe          100000
+dumpfile        ./NVT-700K-200000frames-100fs-1.dump.gz
+natom           2048
+nframe          50000
 dt              0.005
-
 nfreq           1000
 nevery          -1
 nrepeat         50000
-
 msd             1 msd.dat
-sisf            1 1.0 sisf.dat
-overlap         1 0.3 overlap.dat
+sisf            0 1.0 sisf.dat
+overlap         0 0.3 overlap.dat
 
 # end

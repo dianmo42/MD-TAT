@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <zlib.h>
 
 #define real float
 #define DIMENSION 3
@@ -58,7 +59,7 @@ void ReadInput(int argc, char **argv);
 void Initial();
 void ErrorExit(char *ErrMsg);
 int CheckFrame(int frame);
-void ReadDump(FILE *fp, int mode);
+void ReadDump(gzFile fp, int mode);
 void Compute(int frame);
 void Output();
 

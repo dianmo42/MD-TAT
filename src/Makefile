@@ -3,9 +3,9 @@ PROGRAM = TAT
 OBJECTS = main.o read_input.o initial.o check_frame.o read_dump.o compute.o output.o
 
 CC = gcc
-CFLAGS = -Werror -std=c11
-# CFLAGS = -Wall -std=c11 -D DEBUG
-LDFLAGS = -lm -fopenmp
+# CFLAGS = -Werror -std=c11
+CFLAGS = -Wall -std=c11 -D DEBUG
+LDFLAGS = -lz -lm -fopenmp
 
 ${PROGRAM} : ${OBJECTS}
 	${CC} ${CFLAGS} -o ${PROGRAM} ${OBJECTS} ${LDFLAGS}
