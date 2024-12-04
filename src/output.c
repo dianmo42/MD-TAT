@@ -61,8 +61,9 @@ void PrintOverlap()
     for (int t = 0; t < nrepeat; ++t)
     {
         overlap[t] /= nref;
-
-        fprintf(fp, "%.3f  %-10.6g  %-10.6g\n", t_corr[t] * dt, overlap[t], chi4_Q[t]);
+        chi4_Q[t] /= nref;
+        chi4_Q[t] -= overlap[t] * overlap[t];
+        fprintf(fp, "%.3f  %-10.6g  %-10.6g\n", t_corr[t] * dt, overlap[t], natom * chi4_Q[t]);
     }
     fclose(fp);
 
