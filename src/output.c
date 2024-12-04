@@ -22,7 +22,7 @@ void PrintMSD()
 {
     FILE *fp = fopen(fn_msd, "w");
     
-    fprintf(fp, "#  t    MSD    NGP\n");
+    fprintf(fp, "t    MSD    NGP\n");
     for (int t = 0; t < nrepeat; ++t)
     {
         msd[t] /= nref;
@@ -39,7 +39,7 @@ void PrintSISF()
 {
     FILE *fp = fopen(fn_sisf, "w");
     
-    fprintf(fp, "#  t    SISF    chi4\n");
+    fprintf(fp, "t    SISF    Chi4\n");
     for (int t = 0; t < nrepeat; ++t)
     {
         sisf[t] /= nref;
@@ -57,13 +57,13 @@ void PrintOverlap()
 {
     FILE *fp = fopen(fn_overlap, "w");
 
-    fprintf(fp, "#  t    Overlap\n");
+    fprintf(fp, "t    Overlap    Chi4\n");
     for (int t = 0; t < nrepeat; ++t)
     {
         overlap[t] /= nref;
         chi4_Q[t] /= nref;
         chi4_Q[t] -= overlap[t] * overlap[t];
-        
+
         fprintf(fp, "%.3f  %-10.6g  %-10.6g\n", t_corr[t] * dt, overlap[t], natom * chi4_Q[t]);
     }
     fclose(fp);
