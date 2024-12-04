@@ -46,7 +46,7 @@ void PrintSISF()
         chi4[t] /= nref;
         chi4[t] -= sisf[t] * sisf[t];
 
-        fprintf(fp, "%.3f  %-10.6g  %-10.6g\n", t_corr[t] * dt, sisf[t], chi4[t]);
+        fprintf(fp, "%.3f  %-10.6g  %-10.6g\n", t_corr[t] * dt, sisf[t], natom * chi4[t]);
     }
     fclose(fp);
 
